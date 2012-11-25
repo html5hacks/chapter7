@@ -1,0 +1,101 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head> 
+	<title>My Page</title> 
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
+	<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
+	<script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+</head> 
+<body> 
+
+<div data-role="page" data-theme="a">
+
+	<div data-role="header">
+		<h1>Loc Name</h1>
+	</div><!-- /header -->
+
+		<div data-role="content">	
+
+			<div class="geo-name">      
+				    <span id="storeLocation">...</span>
+			</div>
+
+			<a href="./reverse-embed.html" data-role="button" data-inline="true">
+				Back
+			</a>
+
+	</div><!-- /content -->
+
+</div><!-- /page -->
+
+	<script type="text/javascript">
+
+	$(function() {
+
+		var Geo={};
+		var geocoder;
+
+		if (navigator.geolocation) {
+		   geocoder = new google.maps.Geocoder();
+		   navigator.geolocation.getCurrentPosition(success, error);
+		}
+
+		//Get the latitude and the longitude;
+		function success(position) {
+		    Geo.lat = position.coords.latitude;
+		    Geo.lng = position.coords.longitude;
+			populateHeader(Geo.lat, Geo.lng);
+		    reverseGeo(Geo.lat, Geo.lng);
+		}
+
+		function error(){
+		    console.log("Geocoder failed");
+		}
+
+		function populateHeader(lat, lng){
+			$('#Lat').html(lat);
+			$('#Long').html(lng);
+		}
+
+		function reverseGeo(lat, lng) {
+			
+		  var latlng = new google.maps.LatLng(lat, lng);
+
+		   geocoder.geocode({'latLng': latlng}, function(results, status) {
+		       if (status == google.maps.GeocoderStatus.OK) {
+		           if (results[1]) {
+		               for (var i = 0; i < results[0].address_components.length; i++) {
+		                   for (var b = 0; b < results[0].address_components[i].types.length; b++) {
+
+							   if (results[0].address_components[i].types[b] == "locality") {
+		                           city = results[0].address_components[i];
+		                           break;
+		                       }
+
+		                       if (results[0].address_components[i].types[b] == "administrative_area_level_1") {
+		                           state = results[0].address_components[i];
+		                           break;
+		                       }
+		                   }
+		               }
+
+					   Geo.location_name = city.long_name + ", " + state.short_name;
+					   $('#storeLocation').html(Geo.location_name);
+
+		           } else {
+		               console.log("No results found");
+		           }
+		       } else {
+		           console.log("Geocoder failed due to: " + status);
+		       }
+		   });
+		}
+
+	});
+
+	</script>
+
+</body>
+</html>

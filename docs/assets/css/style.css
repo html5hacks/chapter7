@@ -1,0 +1,9 @@
+#iphone {
+	background: url("../img/iphone_ver.png") 0 0 no-repeat;
+}
+
+#iphone iframe{
+	width: 308px;
+	height: 480px;
+	margin: 120px 40px 300px 40px;
+}
